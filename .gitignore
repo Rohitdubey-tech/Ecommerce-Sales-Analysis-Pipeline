@@ -1,0 +1,31 @@
+# Raw & processed data (never commit large datasets to Git)
+data/raw/
+data/processed/
+*.csv
+*.parquet
+*.zip
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# Spark / Hive local artifacts
+metastore_db/
+derby.log
+spark-warehouse/
+
+# Scala / sbt / Maven
+target/
+.bsp/
+.metals/
+
+# OS & IDE
+.DS_Store
+.vscode/
+.idea/
+*.log
+

@@ -1,0 +1,3 @@
+cluster,customer_count,avg_recency,avg_frequency,avg_monetary,total_revenue,customer_pct,revenue_pct,segment_name
+0,83440,239.9,1.0,122.24,10199954.07,97.06,93.98,Hibernating
+1,2527,221.29,2.11,258.76,653879.56,2.94,6.02,Champions

@@ -111,8 +111,13 @@ Measured on Apple Silicon (macOS, local mode) aggregating `order_value`, `order_
 5. **Top Category & Payment Mix:** `bed_bath_table` leads (`R$ 1,112,734.01`, `10.25%` share), and `credit_card` accounts for **77.50%** of revenue (`3.43` avg installments).
 
 ## Dashboard Screenshots
-- **Page 1 – Sales Overview:** `![Sales Overview](docs/dashboard_page1.png)` *(add screenshot after building in Power BI)*
-- **Page 2 – Customers & Delivery:** `![Customers & Delivery](docs/dashboard_page2.png)` *(add screenshot after building in Power BI)*
+Interactive 2-page web dashboard: [`dashboard/index.html`](dashboard/index.html) (plus Power BI blueprint in [`dashboard/powerbi_design.md`](dashboard/powerbi_design.md) and DAX measures in [`dashboard/dax_measures.dax`](dashboard/dax_measures.dax)).
+
+### Page 1 – Sales Overview
+![Sales Overview](docs/dashboard_page1.png)
+
+### Page 2 – Customers & Delivery
+![Customers & Delivery](docs/dashboard_page2.png)
 
 ## Future Work
 - Orchestrate the daily/weekly batch pipeline with **Apache Airflow**.

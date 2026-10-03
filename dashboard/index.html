@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olist E-Commerce Analytics Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
+    header { background: #1e293b; color: #fff; padding: 16px 28px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; font-size: 20px; }
+    .tabs button { background: #334155; color: #fff; border: none; padding: 8px 16px; margin-left: 8px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .tabs button.active { background: #2563eb; }
+    .page { display: none; padding: 24px 28px; max-width: 1320px; margin: auto; }
+    .page.active { display: block; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 10px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .kpi-val { font-size: 26px; font-weight: 700; color: #1d4ed8; }
+    .kpi-lbl { font-size: 13px; color: #6b7280; margin-top: 4px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    canvas { max-height: 320px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Olist E-Commerce Sales Analytics</h1>
+    <div class="tabs">
+      <button id="btn-p1" class="active" onclick="showPage(1)">Page 1: Sales Overview</button>
+      <button id="btn-p2" onclick="showPage(2)">Page 2: Customers &amp; Delivery</button>
+    </div>
+  </header>
+
+  <section id="page1" class="page active">
+    <div class="kpis">
+      <div class="card"><div class="kpi-val">R$ 10,853,834</div><div class="kpi-lbl">Total Revenue</div></div>
+      <div class="card"><div class="kpi-val">88,778</div><div class="kpi-lbl">Delivered Orders</div></div>
+      <div class="card"><div class="kpi-val">R$ 122.26</div><div class="kpi-lbl">Average Order Value (AOV)</div></div>
+      <div class="card"><div class="kpi-val">4.09 / 5.0</div><div class="kpi-lbl">Avg Review Score</div></div>
+    </div>
+    <div class="card"><canvas id="chartMonthly"></canvas></div>
+    <div class="grid-2">
+      <div class="card"><canvas id="chartCategories"></canvas></div>
+      <div class="card"><canvas id="chartStates"></canvas></div>
+    </div>
+  </section>
+
+  <section id="page2" class="page">
+    <div class="grid-2">
+      <div class="card"><canvas id="chartRfm"></canvas></div>
+      <div class="card"><canvas id="chartDelay"></canvas></div>
+      <div class="card"><canvas id="chartStateDelivery"></canvas></div>
+      <div class="card"><canvas id="chartPayment"></canvas></div>
+    </div>
+  </section>
+
+  <script>
+    const DATA = {"kpi": {"total_orders": 88778.0, "total_items": 101718.0, "total_revenue": 10853833.63, "avg_order_value": 122.26, "avg_review_score": 4.09, "late_delivery_pct": 7.72}, "monthly": [{"ym": "2016-09", "revenue": 143.46, "orders_count": 1, "avg_review_score": 1.0}, {"ym": "2016-10", "revenue": 33422.83, "orders_count": 246, "avg_review_score": 3.85}, {"ym": "2016-12", "revenue": 19.62, "orders_count": 1, "avg_review_score": 5.0}, {"ym": "2017-01", "revenue": 90968.68, "orders_count": 694, "avg_review_score": 4.16}, {"ym": "2017-02", "revenue": 186182.47, "orders_count": 1538, "avg_review_score": 4.19}, {"ym": "2017-03", "revenue": 289264.14, "orders_count": 2378, "avg_review_score": 4.15}, {"ym": "2017-04", "revenue": 268817.75, "orders_count": 2153, "avg_review_score": 4.09}, {"ym": "2017-05", "revenue": 402365.42, "orders_count": 3316, "avg_review_score": 4.2}, {"ym": "2017-06", "revenue": 343736.93, "orders_count": 2917, "avg_review_score": 4.2}, {"ym": "2017-07", "revenue": 444683.39, "orders_count": 3647, "avg_review_score": 4.19}, {"ym": "2017-08", "revenue": 465036.92, "orders_count": 3904, "avg_review_score": 4.29}, {"ym": "2017-09", "revenue": 478109.49, "orders_count": 3841, "avg_review_score": 4.19}, {"ym": "2017-10", "revenue": 510333.01, "orders_count": 4101, "avg_review_score": 4.12}, {"ym": "2017-11", "revenue": 825312.48, "orders_count": 6723, "avg_review_score": 3.9}, {"ym": "2017-12", "revenue": 630411.18, "orders_count": 5134, "avg_review_score": 4.03}, {"ym": "2018-01", "revenue": 805856.07, "orders_count": 6586, "avg_review_score": 4.01}, {"ym": "2018-02", "revenue": 741461.2, "orders_count": 6165, "avg_review_score": 3.79}, {"ym": "2018-03", "revenue": 784872.55, "orders_count": 6378, "avg_review_score": 3.78}, {"ym": "2018-04", "revenue": 779552.4, "orders_count": 6206, "avg_review_score": 4.13}, {"ym": "2018-05", "revenue": 768149.48, "orders_count": 6185, "avg_review_score": 4.17}, {"ym": "2018-06", "revenue": 667219.64, "orders_count": 5437, "avg_review_score": 4.21}, {"ym": "2018-07", "revenue": 656740.5, "orders_count": 5440, "avg_review_score": 4.29}, {"ym": "2018-08", "revenue": 681174.02, "orders_count": 5787, "avg_review_score": 4.25}], "categories": [{"product_category": "bed_bath_table", "orders_count": 8977, "revenue": 1112734.01, "avg_review_score": 3.93}, {"product_category": "health_beauty", "orders_count": 7978, "revenue": 990600.84, "avg_review_score": 4.18}, {"product_category": "sports_leisure", "orders_count": 7145, "revenue": 888547.35, "avg_review_score": 4.18}, {"product_category": "computers_accessories", "orders_count": 6139, "revenue": 801455.42, "avg_review_score": 3.99}, {"product_category": "watches_gifts", "orders_count": 4819, "revenue": 748018.18, "avg_review_score": 4.05}, {"product_category": "furniture_decor", "orders_count": 5892, "revenue": 727172.98, "avg_review_score": 3.97}, {"product_category": "housewares", "orders_count": 5311, "revenue": 572012.99, "avg_review_score": 4.13}, {"product_category": "cool_stuff", "orders_count": 3190, "revenue": 471829.25, "avg_review_score": 4.18}, {"product_category": "auto", "orders_count": 3443, "revenue": 427167.38, "avg_review_score": 4.16}, {"product_category": "toys", "orders_count": 3545, "revenue": 418127.56, "avg_review_score": 4.2}], "states": [{"customer_state": "SP", "orders_count": 38464, "revenue": 4412062.45, "avg_delivery_days": 8.56, "late_delivery_pct": 5.65, "avg_review_score": 4.18}, {"customer_state": "RJ", "orders_count": 11328, "revenue": 1444994.12, "avg_delivery_days": 14.93, "late_delivery_pct": 12.93, "avg_review_score": 3.88}, {"customer_state": "MG", "orders_count": 10563, "revenue": 1313161.08, "avg_delivery_days": 11.78, "late_delivery_pct": 5.3, "avg_review_score": 4.13}, {"customer_state": "RS", "orders_count": 4927, "revenue": 626373.51, "avg_delivery_days": 15.04, "late_delivery_pct": 6.74, "avg_review_score": 4.09}, {"customer_state": "PR", "orders_count": 4561, "revenue": 562527.83, "avg_delivery_days": 11.8, "late_delivery_pct": 4.75, "avg_review_score": 4.15}, {"customer_state": "SC", "orders_count": 3227, "revenue": 405033.84, "avg_delivery_days": 14.88, "late_delivery_pct": 9.66, "avg_review_score": 4.04}, {"customer_state": "BA", "orders_count": 2867, "revenue": 372028.67, "avg_delivery_days": 19.08, "late_delivery_pct": 13.63, "avg_review_score": 3.88}, {"customer_state": "DF", "orders_count": 1920, "revenue": 239632.56, "avg_delivery_days": 12.84, "late_delivery_pct": 7.56, "avg_review_score": 4.07}, {"customer_state": "ES", "orders_count": 1842, "revenue": 227362.75, "avg_delivery_days": 15.57, "late_delivery_pct": 12.23, "avg_review_score": 4.02}, {"customer_state": "GO", "orders_count": 1760, "revenue": 227127.56, "avg_delivery_days": 15.33, "late_delivery_pct": 7.89, "avg_review_score": 4.05}, {"customer_state": "PE", "orders_count": 1340, "revenue": 184493.09, "avg_delivery_days": 18.1, "late_delivery_pct": 10.05, "avg_review_score": 4.02}, {"customer_state": "CE", "orders_count": 1075, "revenue": 157199.41, "avg_delivery_days": 20.83, "late_delivery_pct": 15.54, "avg_review_score": 3.9}, {"customer_state": "PA", "orders_count": 756, "revenue": 107485.31, "avg_delivery_days": 23.33, "late_delivery_pct": 12.14, "avg_review_score": 3.88}, {"customer_state": "MT", "orders_count": 760, "revenue": 102596.32, "avg_delivery_days": 17.61, "late_delivery_pct": 6.55, "avg_review_score": 4.0}, {"customer_state": "MS", "orders_count": 630, "revenue": 80067.06, "avg_delivery_days": 15.35, "late_delivery_pct": 10.33, "avg_review_score": 4.06}], "delay": [{"delivery_bucket": "On-time / Early", "orders_count": 82100, "avg_review_score": 4.21}, {"delivery_bucket": "1-3 Days Late", "orders_count": 1678, "avg_review_score": 3.22}, {"delivery_bucket": "4-7 Days Late", "orders_count": 1537, "avg_review_score": 2.09}, {"delivery_bucket": "8+ Days Late", "orders_count": 2433, "avg_review_score": 1.71}], "payment": [{"payment_type": "credit_card", "orders_count": 67048, "revenue": 8412249.75, "avg_installments": 3.43}, {"payment_type": "boleto", "orders_count": 17917, "revenue": 2049223.05, "avg_installments": 1.0}, {"payment_type": "voucher", "orders_count": 2424, "revenue": 242192.01, "avg_installments": 1.44}, {"payment_type": "debit_card", "orders_count": 1388, "revenue": 150025.36, "avg_installments": 1.0}], "rfm": [{"cluster": 0, "customer_count": 83440, "avg_recency": 239.9, "avg_frequency": 1.0, "avg_monetary": 122.24, "total_revenue": 10199954.07, "customer_pct": 97.06, "revenue_pct": 93.98, "segment_name": "Hibernating"}, {"cluster": 1, "customer_count": 2527, "avg_recency": 221.29, "avg_frequency": 2.11, "avg_monetary": 258.76, "total_revenue": 653879.56, "customer_pct": 2.94, "revenue_pct": 6.02, "segment_name": "Champions"}]};
+    function showPage(n) {
+      document.getElementById('page1').classList.toggle('active', n === 1);
+      document.getElementById('page2').classList.toggle('active', n === 2);
+      document.getElementById('btn-p1').classList.toggle('active', n === 1);
+      document.getElementById('btn-p2').classList.toggle('active', n === 2);
+    }
+
+    new Chart(document.getElementById('chartMonthly'), {
+      type: 'line',
+      data: {
+        labels: DATA.monthly.map(d => d.ym),
+        datasets: [{ label: 'Monthly Revenue (R$)', data: DATA.monthly.map(d => d.revenue), borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.12)', fill: true, tension: 0.25 }]
+      }
+    });
+
+    new Chart(document.getElementById('chartCategories'), {
+      type: 'bar',
+      data: {
+        labels: DATA.categories.map(d => d.product_category),
+        datasets: [{ label: 'Top 10 Categories Revenue (R$)', data: DATA.categories.map(d => d.revenue), backgroundColor: '#2563eb' }]
+      },
+      options: { indexAxis: 'y' }
+    });
+
+    new Chart(document.getElementById('chartStates'), {
+      type: 'bar',
+      data: {
+        labels: DATA.states.slice(0, 10).map(d => d.customer_state),
+        datasets: [{ label: 'Top 10 States Revenue (R$)', data: DATA.states.slice(0, 10).map(d => d.revenue), backgroundColor: '#0f766e' }]
+      },
+      options: { indexAxis: 'y' }
+    });
+
+    new Chart(document.getElementById('chartRfm'), {
+      type: 'bar',
+      data: {
+        labels: DATA.rfm.map(d => d.segment_name),
+        datasets: [{ label: 'Customers by RFM Segment', data: DATA.rfm.map(d => d.customer_count), backgroundColor: ['#94a3b8', '#059669'] }]
+      }
+    });
+
+    new Chart(document.getElementById('chartDelay'), {
+      type: 'bar',
+      data: {
+        labels: DATA.delay.map(d => d.delivery_bucket),
+        datasets: [{ label: 'Avg Review Score vs. Delivery Delay', data: DATA.delay.map(d => d.avg_review_score), backgroundColor: ['#10b981', '#f59e0b', '#f97316', '#ef4444'] }]
+      },
+      options: { scales: { y: { min: 0, max: 5 } } }
+    });
+
+    new Chart(document.getElementById('chartStateDelivery'), {
+      type: 'bar',
+      data: {
+        labels: DATA.states.slice(0, 12).map(d => d.customer_state),
+        datasets: [
+          { label: 'Avg Delivery Days', data: DATA.states.slice(0, 12).map(d => d.avg_delivery_days), backgroundColor: '#3b82f6' },
+          { label: 'Late Delivery %', data: DATA.states.slice(0, 12).map(d => d.late_delivery_pct), type: 'line', borderColor: '#dc2626', tension: 0.2 }
+        ]
+      }
+    });
+
+    new Chart(document.getElementById('chartPayment'), {
+      type: 'doughnut',
+      data: {
+        labels: DATA.payment.map(d => d.payment_type),
+        datasets: [{ data: DATA.payment.map(d => d.revenue), backgroundColor: ['#1d4ed8', '#0f766e', '#7c3aed', '#d97706'] }]
+      }
+    });
+  </script>
+</body>
+</html>

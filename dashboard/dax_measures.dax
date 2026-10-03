@@ -1,0 +1,15 @@
+Total Revenue = SUM(monthly_revenue[revenue])
+
+Total Orders = SUM(monthly_revenue[orders_count])
+
+Average Order Value (AOV) = DIVIDE([Total Revenue], [Total Orders], 0)
+
+Weighted Avg Review Score =
+DIVIDE(
+    SUMX(
+        state_delivery_metrics,
+        state_delivery_metrics[avg_review_score] * state_delivery_metrics[orders_count]
+    ),
+    SUM(state_delivery_metrics[orders_count]),
+    0
+)

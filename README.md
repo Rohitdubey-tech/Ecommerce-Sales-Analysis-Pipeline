@@ -110,14 +110,21 @@ Measured on Apple Silicon (macOS, local mode) aggregating `order_value`, `order_
 4. **Retention Opportunity (`2.94%` Repeat Rate):** RFM K-Means (`85,967` customers, `k=2`, silhouette `0.7127`) identifies **2,527 Champions** (`2.94%` of customers, `2.11` avg orders, `R$ 258.76` avg spend) driving **6.02%** of revenue, vs. **83,440 Hibernating** one-time buyers (`97.06%`).
 5. **Top Category & Payment Mix:** `bed_bath_table` leads (`R$ 1,112,734.01`, `10.25%` share), and `credit_card` accounts for **77.50%** of revenue (`3.43` avg installments).
 
-## Dashboard Screenshots
-Interactive 2-page web dashboard: [`dashboard/index.html`](dashboard/index.html) (plus Power BI blueprint in [`dashboard/powerbi_design.md`](dashboard/powerbi_design.md) and DAX measures in [`dashboard/dax_measures.dax`](dashboard/dax_measures.dax)).
+## Dashboard & Visualizations
+Open the interactive 2-page dashboard locally:
+```bash
+open dashboard/index.html
+```
+*(Power BI Desktop blueprint: [`dashboard/powerbi_design.md`](dashboard/powerbi_design.md) · DAX measures: [`dashboard/dax_measures.dax`](dashboard/dax_measures.dax))*
 
 ### Page 1 – Sales Overview
 ![Sales Overview](docs/dashboard_page1.png)
 
 ### Page 2 – Customers & Delivery
 ![Customers & Delivery](docs/dashboard_page2.png)
+
+### RFM Clustering Diagnostics (Elbow & Silhouette)
+![RFM Elbow & Silhouette](docs/rfm_elbow_silhouette.png)
 
 ## Future Work
 - Orchestrate the daily/weekly batch pipeline with **Apache Airflow**.
